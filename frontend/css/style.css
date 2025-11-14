@@ -1,0 +1,85 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* .card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+} */
+
+/* .card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+} */
+
+.card {
+  border: none;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.text-pink {
+  color: #f1a5c7;
+}
+
+/* .text-pink {
+  color: #F8BBD0;
+} */
+
+.nav-link {
+  color: #000 !important;
+  font-weight: 500;
+  padding: 8px 14px !important;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+  background-color: #f8f9fa;
+}
+
+.nav-link.active {
+  background-color: #060414;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+.btn-dark {
+  background-color: #000 !important;
+  border-color: #000 !important;
+  color: white !important;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.btn-dark:hover {
+  background-color: #333 !important;
+  border-color: #333 !important;
+}
+
+.btn-pink {
+  background-color: #F8BBD0;
+  color: #fff;
+  border: none;
+  transition: all 0.3s;
+}
+
+.btn-pink:hover {
+  background-color: #f39ac7;
+}
+
+.badge-category {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #FFE082;
+  color: #333;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  padding: 4px 8px;
+}
