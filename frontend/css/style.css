@@ -83,3 +83,8 @@ body {
   border-radius: 8px;
   padding: 4px 8px;
 }
+
+header .d-flex img {
+  height: 35px !important; 
+  width: auto !important; 
+}
