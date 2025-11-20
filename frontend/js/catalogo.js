@@ -502,12 +502,16 @@ function renderAll() {
 
 //inicialização -> oq acontece quando a página carrega
 document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      if (link.classList.contains("active")) {
+        e.preventDefault();
+      }
+    });
+  });
   populateFilters(); //1 - preenche os filtros <select>
-
   renderProducts(); //2 - renderiza os produtos iniciais
-
   lucide.createIcons(); //3 - renderiza os ícones
-
   //4 - adiciona os listeners de filtro
   searchInput.addEventListener("input", (e) => {
     searchTerm = e.target.value;

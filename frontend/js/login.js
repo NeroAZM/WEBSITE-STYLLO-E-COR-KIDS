@@ -39,8 +39,14 @@ function mockOnLogin(username, password) {
   return username === "admin" && password === "admin123";
 }
 
-function mockOnNavigate(page) {
-  alert(`Simulando navegação para a página: ${page}`);
+function navigateTo(page) {
+  if (page === "home") {
+    window.location.href = "index.html";
+  } else if (page === "admin") {
+    window.location.href = "admin.html";
+  } else {
+    console.warn(`Navegação para a página "${page}" não está implementada.`);
+  }
 }
 
 //inicialização
@@ -59,7 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
   //botão voltar
   if (backButton) {
     backButton.addEventListener("click", () => {
-      mockOnNavigate("home");
+      navigateTo("home");
     });
   }
 
@@ -90,21 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
       usernameInput.value = "";
       passwordInput.value = "";
       setTimeout(() => {
-        mockOnNavigate("admin");
+        navigateTo("admin");
       }, 2000);
     } else {
       showToast("Usuário ou senha incorretos", "error");
     }
-  });
-
-  //links do header (simulação)
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      const pageName = e.currentTarget.textContent.trim();
-      if (pageName !== "Login") {
-        e.preventDefault();
-        mockOnNavigate(pageName);
-      }
-    });
   });
 });
