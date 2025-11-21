@@ -3,9 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const cartFullState = document.getElementById("cart-full-state");
   const cartItemsContainer = document.getElementById("cart-items-container");
   const cartItemCount = document.getElementById("cart-item-count");
-  const summaryItemsContainer = document.getElementById(
-    "summary-items-container"
-  );
+  const summaryItemsContainer = document.getElementById("summary-items-container");
   const summaryTotal = document.getElementById("summary-total");
 
   let cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -34,43 +32,33 @@ document.addEventListener("DOMContentLoaded", () => {
       total += subtotal;
       totalItems += quantity;
 
-      const imageSrc = Array.isArray(product.images)
-        ? product.images[0]
-        : product.images;
+      const imageSrc = Array.isArray(product.images) ? product.images[0] : product.images;
 
       cartItemsContainer.innerHTML += `
         <div class="bg-white rounded-2xl shadow-sm p-4 flex items-center gap-4">
           <img
-            src="${imageSrc || "https://placehold.co/100"}"
+            src="${imageSrc || 'https://placehold.co/100'}"
             alt="${product.name}"
             class="w-24 h-24 object-cover rounded-lg border border-gray-100"
           />
           <div class="flex-grow">
             <h5 class="text-lg font-semibold text-gray-800">${product.name}</h5>
             <p class="text-sm text-gray-500 mb-1">${product.category}</p>
-            <p class="text-pink text-lg font-bold">R$ ${parseFloat(
-              product.price
-            ).toFixed(2)}</p>
+            <p class="text-pink text-lg font-bold">R$ ${parseFloat(product.price).toFixed(2)}</p>
           </div>
           
           <div class="flex flex-col items-end gap-3">
               <div class="flex items-center gap-3 border rounded-lg px-2 py-1 bg-gray-50">
-                <button class="qty-btn hover:text-pink-600" data-id="${
-                  product.id
-                }" data-op="-1">
+                <button class="qty-btn hover:text-pink-600" data-id="${product.id}" data-op="-1">
                   <i data-lucide="minus" class="h-4 w-4"></i>
                 </button>
                 <span class="w-6 text-center font-medium">${quantity}</span>
-                <button class="qty-btn hover:text-pink-600" data-id="${
-                  product.id
-                }" data-op="1">
+                <button class="qty-btn hover:text-pink-600" data-id="${product.id}" data-op="1">
                   <i data-lucide="plus" class="h-4 w-4"></i>
                 </button>
               </div>
               
-              <button class="remove-btn text-gray-400 hover:text-red-500 transition-colors p-1" data-id="${
-                product.id
-              }">
+              <button class="remove-btn text-gray-400 hover:text-red-500 transition-colors p-1" data-id="${product.id}">
                 <i data-lucide="trash-2" class="h-5 w-5"></i>
               </button>
           </div>
@@ -79,18 +67,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       summaryItemsContainer.innerHTML += `
         <div class="flex justify-between text-sm text-gray-600">
-          <span>${
-            product.name
-          } <span class="text-xs text-gray-400">x${quantity}</span></span>
+          <span>${product.name} <span class="text-xs text-gray-400">x${quantity}</span></span>
           <span class="font-medium">R$ ${subtotal.toFixed(2)}</span>
         </div>
       `;
     });
 
     summaryTotal.textContent = `R$ ${total.toFixed(2)}`;
-    cartItemCount.textContent = `Você tem ${totalItems} ${
-      totalItems === 1 ? "item" : "itens"
-    } no carrinho`;
+    cartItemCount.textContent = `Você tem ${totalItems} ${totalItems === 1 ? "item" : "itens"} no carrinho`;
 
     lucide.createIcons();
     addEventListeners();

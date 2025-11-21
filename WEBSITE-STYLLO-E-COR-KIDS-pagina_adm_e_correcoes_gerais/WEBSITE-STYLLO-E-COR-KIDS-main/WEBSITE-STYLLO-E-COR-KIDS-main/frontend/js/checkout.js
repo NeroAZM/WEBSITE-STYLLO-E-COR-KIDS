@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+
   const summaryItemsContainer = document.getElementById(
     "summary-items-container"
   );
@@ -107,14 +108,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadSummary();
   checkoutForm.addEventListener("submit", handleSubmit);
-
-  lucide.createIcons();
-
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      if (link.classList.contains("active")) {
-        e.preventDefault();
-      }
-    });
-  });
 });

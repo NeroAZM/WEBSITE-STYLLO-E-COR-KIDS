@@ -3,7 +3,7 @@
 // Função de toast (com criação automática do container se não existir)
 export function showToast(message, type = "info") {
   let toastContainer = document.getElementById("toast-container");
-
+  
   // Se não existir no HTML, cria dinamicamente para evitar erros
   if (!toastContainer) {
     toastContainer = document.createElement("div");
@@ -72,20 +72,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- CORREÇÃO AQUI ---
   // Agora busca pelo ID "loginForm" (igual ao seu HTML) e não "login-form"
-  const loginForm = document.getElementById("loginForm");
-
+  const loginForm = document.getElementById("loginForm"); 
+  
   const usernameInput = document.getElementById("username");
   const passwordInput = document.getElementById("password");
   const backButton = document.getElementById("back-button");
-  const forgotPasswordButton = document.getElementById(
-    "forgot-password-button"
-  );
+  const forgotPasswordButton = document.getElementById("forgot-password-button");
 
   // Botão voltar
   if (backButton) {
     backButton.addEventListener("click", (e) => {
-      e.preventDefault(); // Previne comportamento padrão se for botão dentro de form
-      navigateTo("home");
+        e.preventDefault(); // Previne comportamento padrão se for botão dentro de form
+        navigateTo("home");
     });
   }
 
@@ -114,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (success) {
         showToast("Login realizado com sucesso!", "success");
         localStorage.setItem("isAdmin", "true");
-
+        
         usernameInput.value = "";
         passwordInput.value = "";
 

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stylo e Cor Kids - Moda Infantil</title>
+    
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/lucide.min.js"></script>
+  </head>
+  
+  <body class="bg-light d-flex flex-column min-vh-100">
+    
+    <header class="py-2 shadow-sm bg-white">
+      <div class="container d-flex align-items-center justify-content-between flex-wrap">
+        <div class="d-flex align-items-center">
+          <img src="img/logo.jpg" alt="Logo" class="me-2" height="35" />
+          <div>
+            <h5 class="m-0 fw-bold text-pink">Stylo e Cor Kids</h5>
+            <p class="m-0 small text-muted">Estilo e cor para a alegria!</p>
+          </div>
+        </div>
+        <nav>
+          <ul class="nav">
+            <li class="nav-item">
+              <a href="index.html" class="nav-link active">
+                <i class="bi bi-house"></i> Início
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="catalogo.html" class="nav-link">
+                <i class="bi bi-box"></i> Catálogo
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="contato.html" class="nav-link">
+                <i class="bi bi-telephone"></i> Contato
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="carrinho.html" class="nav-link">
+                <i class="bi bi-cart"></i> Carrinho
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="login.html" class="nav-link">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    
+    <main class="flex-grow-1">
+      <div class="min-h-screen">
+        <section
+          class="relative overflow-hidden py-20 px-4"
+          style="
+            background: linear-gradient(
+              135deg,
+              rgb(255, 224, 130) 0%,
+              rgb(248, 187, 208) 50%,
+              rgb(187, 222, 251) 100%
+            );
+          "
+        >
+          <div class="container mx-auto">
+            <div class="grid gap-8 lg:grid-cols-2 items-center">
+              <div class="text-center lg:text-left space-y-6">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 backdrop-blur">
+                  <i data-lucide="sparkles" class="h-5 w-5" style="color: rgb(248, 187, 208)"></i>
+                  <span class="text-sm">Moda Infantil com Estilo</span>
+                </div>
+
+                <h1 class="text-4xl lg:text-5xl font-bold text-gray-800 leading-tight">
+                  Estilo e cor para a alegria das crianças!
+                </h1>
+                <p class="text-lg text-gray-700 max-w-md mx-auto lg:mx-0">
+                  Roupas coloridas, confortáveis e cheias de alegria para
+                  os pequenos se divertirem com estilo. Qualidade e
+                  carinho em cada peça!
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+                  <a href="catalogo.html"
+                    class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-white rounded-xl hover:opacity-90 transition-all shadow-lg gap-2 no-underline"
+                    style="background-color: #e4405f"
+                  >
+                    Ver o Catálogo
+                    <i data-lucide="arrow-right" class="h-5 w-5"></i>
+                  </a>
+                  <a href="contato.html"
+                    class="inline-flex items-center justify-center px-8 py-4 text-lg font-medium bg-white/80 text-gray-800 border border-white rounded-xl hover:bg-white transition-all gap-2 no-underline"
+                  >
+                    Fale Conosco
+                    <i data-lucide="heart" class="h-5 w-5 text-pink-400"></i>
+                  </a>
+                </div>
+              </div>
+              
+              <div class="relative">
+                <div class="relative rounded-3xl overflow-hidden shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-500">
+                  <img
+                    src="https://images.unsplash.com/photo-1643042945810-1119948eeabc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080"
+                    alt="Crianças felizes com roupas coloridas"
+                    class="w-full h-[400px] lg:h-[500px] object-cover"
+                  />
+                </div>
+                <div class="absolute top-4 right-4 bg-white rounded-2xl shadow-lg p-4 animate-bounce">
+                  <i data-lucide="star" class="h-8 w-8" style="color: rgb(255, 224, 130); fill: rgb(255, 224, 130)"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="py-16 px-4 bg-gray-50">
+          <div class="container mx-auto">
+            <h2 class="text-3xl lg:text-4xl text-center mb-12 text-gray-800 font-bold">
+              Por que escolher a Stylo e Cor Kids?
+            </h2>
+            <div class="grid gap-8 md:grid-cols-3">
+              <div class="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="inline-flex h-16 w-16 items-center justify-center rounded-full mb-4" style="background-color: #fff9c4">
+                  <i data-lucide="sparkles" class="h-8 w-8 text-yellow-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Qualidade Superior</h3>
+                <p class="text-gray-600">
+                  Tecidos confortáveis e duráveis para acompanhar a energia dos pequenos em todas as brincadeiras.
+                </p>
+              </div>
+              <div class="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="inline-flex h-16 w-16 items-center justify-center rounded-full mb-4" style="background-color: #f8bbd0">
+                  <i data-lucide="heart" class="h-8 w-8 text-pink-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Feito com Carinho</h3>
+                <p class="text-gray-600">
+                  Cada peça é selecionada pensando no conforto, segurança e felicidade das crianças.
+                </p>
+              </div>
+              <div class="text-center p-8 bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all hover:-translate-y-1">
+                <div class="inline-flex h-16 w-16 items-center justify-center rounded-full mb-4" style="background-color: #bbdefb">
+                  <i data-lucide="palette" class="h-8 w-8 text-blue-600"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3 text-gray-800">Cores Vibrantes</h3>
+                <p class="text-gray-600">
+                  Estampas alegres e cores vivas que fazem os olhinhos brilharem e estimulam a criatividade.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="py-20 px-4">
+          <div class="container mx-auto text-center">
+            <div class="max-w-4xl mx-auto rounded-3xl p-12 relative overflow-hidden" style="background-color: #bbdefb">
+              <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                 <i data-lucide="cloud" class="absolute top-10 left-10 h-20 w-20"></i>
+                 <i data-lucide="sun" class="absolute bottom-10 right-10 h-24 w-24"></i>
+              </div>
+              
+              <h2 class="text-3xl lg:text-4xl mb-6 text-gray-800 font-bold relative z-10">
+                Pronto para deixar os pequenos ainda mais felizes?
+              </h2>
+              <p class="text-xl text-gray-700 mb-8 relative z-10">
+                Explore nosso catálogo completo e encontre as peças perfeitas para o guarda-roupa deles!
+              </p>
+              <a href="catalogo.html"
+                class="inline-flex items-center justify-center px-8 py-4 text-lg font-bold bg-white text-blue-600 rounded-xl hover:bg-gray-50 transition-colors gap-2 shadow-md relative z-10 no-underline"
+              >
+                Começar a Comprar
+                <i data-lucide="shopping-bag" class="h-5 w-5"></i>
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="border-t bg-gray-50 py-8 px-4">
+      <div class="container mx-auto text-center">
+        <div class="flex h-12 w-12 mx-auto items-center justify-center rounded-full mb-4 bg-gradient-to-br from-[#FFE082] via-[#F8BBD0] to-[#BBDEFB]">
+          <span class="text-2xl">👕</span>
+        </div>
+        <h3 class="text-xl mb-2 text-pink" style="color: #f8bbd0">Stylo e Cor Kids</h3>
+        <p class="text-sm text-gray-600 mb-4">
+          Estilo e cor para a alegria das crianças!
+        </p>
+        <p class="text-xs text-gray-500">
+          © 2025 Stylo e Cor Kids. Todos os direitos reservados.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

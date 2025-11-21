@@ -1,95 +1,11 @@
-//dados de exemplo (mockado)
-const MOCK_PRODUCTS = [
-  {
-    id: 1,
-    name: "Conjunto Moletom Dino",
-    description:
-      "Quentinho e divertido, com estampa de dinossauro que brilha no escuro.",
-    price: 129.9,
-    category: "Conjuntos",
-    ageRange: "4-6 anos",
-    images: [
-      "https://i.imgur.com/g82xL1A.png",
-      "https://i.imgur.com/Wv2k6fT.png",
-    ],
-    sizes: ["P", "M", "G"],
-    colors: ["Cinza", "Azul"],
-  },
-  {
-    id: 2,
-    name: "Vestido Floral Princesa",
-    description: "Lindo vestido rodado com estampa floral e cinto de pérolas.",
-    price: 159.9,
-    category: "Vestidos",
-    ageRange: "2-4 anos",
-    images: [
-      "https://i.imgur.com/BVO3rFJ.png",
-      "https://i.imgur.com/fWaX1xG.png",
-    ],
-    sizes: ["P", "M"],
-    colors: ["Rosa", "Branco"],
-  },
-  {
-    id: 3,
-    name: "Camiseta Básica Foguete",
-    description: "Camiseta de algodão confortável com estampa de foguete.",
-    price: 49.9,
-    category: "Camisetas",
-    ageRange: "4-6 anos",
-    images: [
-      "https://i.imgur.com/Wv2k6fT.png",
-      "https://i.imgur.com/g82xL1A.png",
-    ],
-    sizes: ["M", "G"],
-    colors: ["Preto", "Branco", "Vermelho"],
-  },
-  {
-    id: 4,
-    name: "Macacão Ursinho",
-    description:
-      "Macacão de pelúcia super macio com orelhinhas de urso no capuz.",
-    price: 99.9,
-    category: "Macacões",
-    ageRange: "0-1 ano",
-    images: [
-      "https://i.imgur.com/fWaX1xG.png",
-      "https://i.imgur.com/BVO3rFJ.png",
-    ],
-    sizes: ["RN", "P"],
-    colors: ["Marrom", "Bege"],
-  },
-  {
-    id: 5,
-    name: "Tênis Led Colorido",
-    description: "Tênis casual com luzes de LED na sola que piscam ao andar.",
-    price: 189.9,
-    category: "Calçados",
-    ageRange: "2-4 anos",
-    images: ["https://i.imgur.com/g82xL1A.png"],
-    sizes: ["22", "23", "24"],
-    colors: ["Branco"],
-  },
-  {
-    id: 6,
-    name: "Pijama de Verão",
-    description: "Pijama de malha leve e fresca, perfeito para noites quentes.",
-    price: 79.9,
-    category: "Pijamas",
-    ageRange: "4-6 anos",
-    images: ["https://i.imgur.com/BVO3rFJ.png"],
-    sizes: ["P", "M", "G"],
-    colors: ["Amarelo", "Azul"],
-  },
-];
+/**
+ * Busca produtos do MongoDB e gerencia a exibição e filtros.
+ */
 
-//estado da aplicação
-let searchTerm = "";
-let categoryFilter = "all";
-let ageFilter = "all";
-let currentImageIndex = 0; // Para o modal
+const API_URL = "http://localhost:3000/api/produtos";
+let allProducts = [];
 
-//referências do DOM
-//pega todos os elementos que vão ser manipulados
+// Referências do DOM
 const searchInput = document.getElementById("search-input");
 const categorySelect = document.getElementById("category-filter");
 const ageSelect = document.getElementById("age-filter");
@@ -102,113 +18,36 @@ const activeFiltersContainer = document.getElementById(
   "active-filters-container"
 );
 
-//funções principais
+// Estado dos filtros
+let searchTerm = "";
+let categoryFilter = "all";
+let ageFilter = "all";
+let currentImageIndex = 0;
 
-//função de toast -> cria um elemento de toast e o remove após 2 segundos
-function showToast(message) {
-  const toast = document.createElement("div");
-  toast.className =
-    "bg-green-600 text-white p-3 rounded-lg shadow-lg mb-2 transition-all duration-300 toast-enter";
-  toast.textContent = message;
+// BUSCAR DADOS DA API ---
+async function fetchProducts() {
+  try {
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-  toastContainer.appendChild(toast);
+    allProducts = data.map((produto) => ({
+      ...produto,
+      id: produto._id,
+      images: Array.isArray(produto.images) ? produto.images : [produto.images],
+    }));
 
-  //animação de entrada
-  requestAnimationFrame(() => {
-    toast.classList.remove("toast-enter");
-  });
-
-  //remove o toast após 2 segundos
-  setTimeout(() => {
-    toast.classList.add("toast-exit");
-    toast.addEventListener("transitionend", () => {
-      toast.remove();
-    });
-  }, 2000);
-}
-
-//adiciona um produto ao carrinho no localStorage
-function handleAddToCart(product) {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
-  const existingItem = cart.find((item) => item.product.id === product.id);
-  if (existingItem) {
-    existingItem.quantity += 1;
-  } else {
-    cart.push({ product: product, quantity: 1 });
-  }
-  localStorage.setItem("cart", JSON.stringify(cart));
-  showToast(`${product.name} adicionado ao carrinho!`);
-}
-
-//atualiza os filtros ativos visíveis
-function renderActiveFilters() {
-  activeFiltersContainer.innerHTML = ""; //limpa os filtros
-
-  let hasFilters = false;
-  let filtersHTML =
-    '<span class="text-sm text-gray-600">Filtros ativos:</span>';
-
-  if (searchTerm) {
-    hasFilters = true;
-    filtersHTML += `
-      <span class="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
-        Busca: ${searchTerm}
-        <button data-filter-type="search" class="filter-remove-btn">
-          <i data-lucide="x" class="h-3 w-3"></i>
-        </button>
-      </span>`;
-  }
-
-  if (categoryFilter !== "all") {
-    hasFilters = true;
-    filtersHTML += `
-      <span class="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
-        ${categoryFilter}
-        <button data-filter-type="category" class="filter-remove-btn">
-          <i data-lucide="x" class="h-3 w-3"></i>
-        </button>
-      </span>`;
-  }
-
-  if (ageFilter !== "all") {
-    hasFilters = true;
-    filtersHTML += `
-      <span class="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">
-        ${ageFilter}
-        <button data-filter-type="age" class="filter-remove-btn">
-          <i data-lucide="x" class="h-3 w-3"></i>
-        </button>
-      </span>`;
-  }
-
-  if (hasFilters) {
-    activeFiltersContainer.innerHTML = filtersHTML;
-    //adiciona os ícones do Lucide
-    lucide.createIcons();
-    //adiciona listeners para os botões de remover filtro
-    document.querySelectorAll(".filter-remove-btn").forEach((button) => {
-      button.addEventListener("click", () => {
-        const filterType = button.getAttribute("data-filter-type");
-        if (filterType === "search") {
-          searchTerm = "";
-          searchInput.value = "";
-        } else if (filterType === "category") {
-          categoryFilter = "all";
-          categorySelect.value = "all";
-        } else if (filterType === "age") {
-          ageFilter = "all";
-          ageSelect.value = "all";
-        }
-        renderAll(); //re-renderiza tudo
-      });
-    });
+    populateFilters();
+    renderAll();
+  } catch (error) {
+    console.error("Erro ao buscar produtos:", error);
+    productGrid.innerHTML = `<p class="col-span-full text-center text-red-500">Erro ao carregar catálogo. Verifique se o servidor está rodando.</p>`;
   }
 }
 
-//renderiza os produtos na grade -> função principal de renderização
+// RENDERIZAÇÃO ---
+
 function renderProducts() {
-  //1 -  filtra os produtos
-  const filteredProducts = MOCK_PRODUCTS.filter((product) => {
+  const filteredProducts = allProducts.filter((product) => {
     const matchesSearch =
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -219,10 +58,8 @@ function renderProducts() {
     return matchesSearch && matchesCategory && matchesAge;
   });
 
-  //2 - limpa a grade atual
   productGrid.innerHTML = "";
 
-  //3 - mostra ou esconde a mensagem de "Nenhum produto"
   if (filteredProducts.length === 0) {
     noResultsDiv.classList.remove("hidden");
     productGrid.classList.add("hidden");
@@ -230,88 +67,78 @@ function renderProducts() {
     noResultsDiv.classList.add("hidden");
     productGrid.classList.remove("hidden");
 
-    // 4 - cria e adiciona cada card de produto
     filteredProducts.forEach((product) => {
       const card = document.createElement("div");
-      //copiamos as classes do tailwind do jsx
       card.className =
-        "overflow-hidden rounded-lg border border-gray-200 bg-white hover:shadow-lg transition-shadow cursor-pointer group";
+        "overflow-hidden rounded-lg border border-gray-200 bg-white hover:shadow-lg transition-shadow cursor-pointer group h-full flex flex-col";
+
+      // Fallback de imagem
+      const imgSrc =
+        product.images.length > 0
+          ? product.images[0]
+          : "https://placehold.co/300?text=Sem+Foto";
 
       card.innerHTML = `
-        <div class="relative product-image-container">
-          <img
-            src="${product.images[0]}"
-            alt="${product.name}"
-            class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <span class="absolute top-3 right-3 rounded-full px-2 py-1 text-xs" style="background-color: #FFE082; color: #333;">
-            ${product.category}
-          </span>
-        </div>
-        
-        <div class="p-4 space-y-3">
-          <div>
-            <h3 class="text-lg mb-1">${product.name}</h3>
-            <p class="text-sm text-gray-600 line-clamp-2">
-              ${product.description}
-            </p>
-          </div>
-          
-          <div class="flex items-center gap-2">
-            <span class="border border-gray-300 rounded-full px-2 py-0.5 text-xs">
-              ${product.ageRange}
-            </span>
-          </div>
-          
-          <div class="flex items-center justify-between pt-2">
-            <span class="text-2xl" style="color: #F8BBD0;">
-              R$ ${product.price.toFixed(2)}
-            </span>
-            <button
-              class="add-to-cart-btn inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 gap-1 text-white"
-              style="background-color: #F8BBD0;"
-            >
-              <i data-lucide="shopping-cart" class="h-4 w-4"></i>
-              Adicionar
-            </button>
-          </div>
-        </div>
-      `;
+                <div class="relative product-image-container h-64 overflow-hidden">
+                  <img
+                    src="${imgSrc}"
+                    alt="${product.name}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <span class="absolute top-3 right-3 rounded-full px-2 py-1 text-xs font-medium shadow-sm" style="background-color: #FFE082; color: #333;">
+                    ${product.category}
+                  </span>
+                </div>
+                
+                <div class="p-4 space-y-3 flex flex-col flex-grow">
+                  <div class="flex-grow">
+                    <h3 class="text-lg font-semibold mb-1 leading-tight">${
+                      product.name
+                    }</h3>
+                    <p class="text-sm text-gray-600 line-clamp-2">${
+                      product.description
+                    }</p>
+                  </div>
+                  
+                  <div class="flex items-center gap-2 mt-2">
+                    <span class="border border-gray-300 rounded-full px-2 py-0.5 text-xs text-gray-600">
+                      ${product.ageRange}
+                    </span>
+                  </div>
+                  
+                  <div class="flex items-center justify-between pt-3 mt-auto border-t">
+                    <span class="text-xl font-bold" style="color: #e4405f;">
+                      R$ ${parseFloat(product.price).toFixed(2)}
+                    </span>
+                    <button class="add-to-cart-btn inline-flex items-center justify-center rounded-lg text-sm font-medium h-9 px-3 gap-1 text-white transition-opacity hover:opacity-90"
+                      style="background-color: #f8bbd0; color: #444;">
+                      <i data-lucide="shopping-cart" class="h-4 w-4"></i>
+                      Adicionar
+                    </button>
+                  </div>
+                </div>
+            `;
 
-      //adiciona os event listeners
+      // Event Listeners
       card
         .querySelector(".product-image-container")
-        .addEventListener("click", () => {
-          openModal(product);
-        });
-
+        .addEventListener("click", () => openModal(product));
       card.querySelector(".add-to-cart-btn").addEventListener("click", (e) => {
-        e.stopPropagation(); //impede que o clique no botão abra o modal
+        e.stopPropagation();
         handleAddToCart(product);
-        //aqui chama a função real de adicionar ao carrinho
       });
 
       productGrid.appendChild(card);
     });
   }
-
-  //atualiza os ícones do Lucide
   lucide.createIcons();
 }
 
-//preenche os filtros <select> com opções
-function populateFilters() {
-  //pega valores únicos
-  const categories = [
-    "all",
-    ...Array.from(new Set(MOCK_PRODUCTS.map((p) => p.category))),
-  ];
-  const ageRanges = [
-    "all",
-    ...Array.from(new Set(MOCK_PRODUCTS.map((p) => p.ageRange))),
-  ];
+// FILTROS ---
 
-  //limpa e preenche categorias
+function populateFilters() {
+  // Categorias Únicas
+  const categories = ["all", ...new Set(allProducts.map((p) => p.category))];
   categorySelect.innerHTML = "";
   categories.forEach((cat) => {
     const option = document.createElement("option");
@@ -320,7 +147,8 @@ function populateFilters() {
     categorySelect.appendChild(option);
   });
 
-  //limpa e preenche faixas etárias
+  // Faixas Etárias Únicas
+  const ageRanges = ["all", ...new Set(allProducts.map((p) => p.ageRange))];
   ageSelect.innerHTML = "";
   ageRanges.forEach((age) => {
     const option = document.createElement("option");
@@ -330,209 +158,214 @@ function populateFilters() {
   });
 }
 
-/**
- * Abre o modal com os detalhes do produto
- */
-function openModal(product) {
-  currentImageIndex = 0; // Reseta o índice da imagem
-  renderModalContent(product);
-  modal.showModal(); // API nativa do <dialog>
-}
+function renderActiveFilters() {
+  activeFiltersContainer.innerHTML = "";
+  let hasFilters = false;
+  let filtersHTML =
+    '<span class="text-sm text-gray-600 mr-2">Filtros ativos:</span>';
 
-/**
- * Fecha o modal
- */
-function closeModal() {
-  modal.close(); // API nativa do <dialog>
-  modalContent.innerHTML = ""; // Limpa o conteúdo
-}
+  const createBadge = (text, type) => `
+        <span class="inline-flex items-center gap-1 rounded-full bg-pink-50 px-3 py-1 text-xs font-medium text-pink-700 border border-pink-100">
+            ${text}
+            <button data-filter-type="${type}" class="filter-remove-btn ml-1 hover:text-pink-900">
+                <i data-lucide="x" class="h-3 w-3"></i>
+            </button>
+        </span>
+    `;
 
-//renderiza o conteúdo HTML dentro do modal
-function renderModalContent(product) {
-  //gera HTML para as miniaturas
-  let thumbnailsHTML = "";
-  if (product.images.length > 1) {
-    thumbnailsHTML = `
-      <div class="flex gap-2">
-        ${product.images
-          .map(
-            (img, idx) => `
-          <button
-            class="thumbnail-btn relative rounded-lg overflow-hidden border-2 transition-all ${
-              idx === 0 ? "border-pink-400 scale-105" : "border-gray-200"
-            }"
-            data-index="${idx}"
-          >
-            <img
-              src="${img}"
-              alt="${product.name} - ${idx + 1}"
-              class="w-20 h-20 object-cover"
-            />
-          </button>
-        `
-          )
-          .join("")}
-      </div>`;
+  if (searchTerm) {
+    hasFilters = true;
+    filtersHTML += createBadge(`Busca: ${searchTerm}`, "search");
+  }
+  if (categoryFilter !== "all") {
+    hasFilters = true;
+    filtersHTML += createBadge(categoryFilter, "category");
+  }
+  if (ageFilter !== "all") {
+    hasFilters = true;
+    filtersHTML += createBadge(ageFilter, "age");
   }
 
-  //gera HTML para os tamanhos e cores
-  const sizesHTML = product.sizes
-    .map(
-      (size) =>
-        `<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">${size}</span>`
-    )
-    .join("");
-  const colorsHTML = product.colors
-    .map(
-      (color) =>
-        `<span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700">${color}</span>`
-    )
-    .join("");
+  if (hasFilters) {
+    activeFiltersContainer.innerHTML = filtersHTML;
+    lucide.createIcons();
 
-  //define o HTML do conteúdo do modal
+    document.querySelectorAll(".filter-remove-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const type = button.dataset.filterType;
+        if (type === "search") {
+          searchTerm = "";
+          searchInput.value = "";
+        }
+        if (type === "category") {
+          categoryFilter = "all";
+          categorySelect.value = "all";
+        }
+        if (type === "age") {
+          ageFilter = "all";
+          ageSelect.value = "all";
+        }
+        renderAll();
+      });
+    });
+  }
+}
+
+// MODAL ---
+
+function openModal(product) {
+  currentImageIndex = 0;
+  renderModalContent(product);
+  modal.showModal();
+}
+
+function closeModal() {
+  modal.close();
+  modalContent.innerHTML = "";
+}
+
+function renderModalContent(product) {
+  // Como adaptamos o dado para sempre ser array no inicio, isso continua funcionando
+  const mainImage =
+    product.images.length > 0 ? product.images[0] : "https://placehold.co/400";
+
   modalContent.innerHTML = `
-    <button id="modal-close-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 z-10">
-      <i data-lucide="x" class="h-6 w-6"></i>
-    </button>
-    
-    <div class="p-6 pt-10">
-      <h2 class="text-2xl font-semibold mb-2">${product.name}</h2>
-      <p class="text-gray-600 mb-4">${product.description}</p>
-      
-      <div class="grid gap-6 md:grid-cols-2">
-        <div class="space-y-3">
-          <div class="relative rounded-lg overflow-hidden border">
-            <img
-              id="modal-main-image"
-              src="${product.images[currentImageIndex]}"
-              alt="${product.name}"
-              class="w-full h-80 object-cover"
-            />
-          </div>
-          ${thumbnailsHTML}
-        </div>
+        <button id="modal-close-btn" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-10 bg-white rounded-full p-1 shadow-sm">
+            <i data-lucide="x" class="h-6 w-6"></i>
+        </button>
         
-        <div class="space-y-4">
-          <div>
-            <span class="text-3xl" style="color: #F8BBD0;">
-              R$ ${product.price.toFixed(2)}
-            </span>
-          </div>
-          
-          <div>
-            <h4 class="mb-2 text-sm font-medium text-gray-700">Categoria</h4>
-            <span class="rounded-full px-2 py-1 text-xs" style="background-color: #FFE082; color: #333;">
-              ${product.category}
-            </span>
-          </div>
-          
-          <div>
-            <h4 class="mb-2 text-sm font-medium text-gray-700">Faixa Etária</h4>
-            <span class="border border-gray-300 rounded-full px-2 py-0.5 text-xs">
-              ${product.ageRange}
-            </span>
-          </div>
-          
-          <div>
-            <h4 class="mb-2 text-sm font-medium text-gray-700">Tamanhos Disponíveis</h4>
-            <div class="flex gap-2 flex-wrap">${sizesHTML}</div>
-          </div>
-          
-          <div>
-            <h4 class="mb-2 text-sm font-medium text-gray-700">Cores Disponíveis</h4>
-            <div class="flex gap-2 flex-wrap">${colorsHTML}</div>
-          </div>
-          
-          <button
-            id="modal-add-to-cart-btn"
-            class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium h-10 px-4 gap-2 text-white"
-            style="background-color: #F8BBD0;"
-          >
-            <i data-lucide="shopping-cart" class="h-5 w-5"></i>
-            Adicionar ao Carrinho
-          </button>
+        <div class="p-6 md:p-8">
+            <div class="grid gap-8 md:grid-cols-2">
+                <div class="space-y-4">
+                    <div class="relative rounded-2xl overflow-hidden border border-gray-100 bg-gray-50 aspect-square">
+                        <img id="modal-main-image" src="${mainImage}" alt="${
+    product.name
+  }" class="w-full h-full object-cover" />
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <span class="inline-block px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mb-3">
+                            ${product.category}
+                        </span>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2 leading-tight">${
+                          product.name
+                        }</h2>
+                        <p class="text-gray-600 leading-relaxed">${
+                          product.description
+                        }</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Faixa Etária</h4>
+                            <span class="inline-block px-3 py-1 rounded-md bg-gray-100 text-gray-700 text-sm font-medium">
+                                ${product.ageRange}
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Tamanhos</h4>
+                            <span class="text-gray-700 text-sm">${
+                              product.sizes || "Único"
+                            }</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pt-6 border-t border-gray-100 flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-sm text-gray-500">Preço</span>
+                            <span class="text-3xl font-bold" style="color: #e4405f;">R$ ${parseFloat(
+                              product.price
+                            ).toFixed(2)}</span>
+                        </div>
+                        
+                        <button id="modal-add-to-cart-btn" class="btn-pink px-6 py-3 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 flex items-center gap-2">
+                            <i data-lucide="shopping-bag" class="h-5 w-5"></i>
+                            Adicionar à Sacola
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  `;
+    `;
 
-  //atualiza os ícones do Lucide
   lucide.createIcons();
 
-  //adiciona event listeners (depois de criar o HTML)
   document
     .getElementById("modal-close-btn")
     .addEventListener("click", closeModal);
-
   document
     .getElementById("modal-add-to-cart-btn")
     .addEventListener("click", () => {
       handleAddToCart(product);
       closeModal();
     });
-
-  document.querySelectorAll(".thumbnail-btn").forEach((button) => {
-    button.addEventListener("click", () => {
-      const newIndex = parseInt(button.getAttribute("data-index"));
-      currentImageIndex = newIndex;
-
-      //atualiza a imagem principal
-      document.getElementById("modal-main-image").src =
-        product.images[newIndex];
-
-      //atualiza o estilo dos botões
-      document.querySelectorAll(".thumbnail-btn").forEach((btn, idx) => {
-        if (idx === newIndex) {
-          btn.classList.add("border-pink-400", "scale-105");
-          btn.classList.remove("border-gray-200");
-        } else {
-          btn.classList.remove("border-pink-400", "scale-105");
-          btn.classList.add("border-gray-200");
-        }
-      });
-    });
-  });
 }
 
-//função helper pra renderizar tudo
+// CARRINHO E UTILITÁRIOS ---
+
+function showToast(message) {
+  const toast = document.createElement("div");
+  toast.className =
+    "bg-green-600 text-white px-6 py-3 rounded-lg shadow-xl mb-3 transition-all duration-300 toast-enter flex items-center gap-2";
+  toast.innerHTML = `<i data-lucide="check-circle" class="w-5 h-5"></i> ${message}`;
+  toastContainer.appendChild(toast);
+  lucide.createIcons();
+
+  requestAnimationFrame(() => toast.classList.remove("toast-enter"));
+  setTimeout(() => {
+    toast.classList.add("toast-exit");
+    toast.addEventListener("transitionend", () => toast.remove());
+  }, 3000);
+}
+
+function handleAddToCart(product) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  // Usa 'id' (que é o _id mapeado) para comparação
+  const existingItem = cart.find((item) => item.product.id === product.id);
+
+  if (existingItem) {
+    existingItem.quantity += 1;
+  } else {
+    cart.push({ product: product, quantity: 1 });
+  }
+  localStorage.setItem("cart", JSON.stringify(cart));
+  showToast(`${product.name} adicionado!`);
+}
+
 function renderAll() {
   renderProducts();
   renderActiveFilters();
 }
 
-//inicialização -> oq acontece quando a página carrega
+// Inicialização
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      if (link.classList.contains("active")) {
-        e.preventDefault();
-      }
-    });
-  });
-  populateFilters(); //1 - preenche os filtros <select>
-  renderProducts(); //2 - renderiza os produtos iniciais
-  lucide.createIcons(); //3 - renderiza os ícones
-  //4 - adiciona os listeners de filtro
+  // Configura Listeners
   searchInput.addEventListener("input", (e) => {
     searchTerm = e.target.value;
     renderAll();
   });
-
   categorySelect.addEventListener("change", (e) => {
     categoryFilter = e.target.value;
     renderAll();
   });
-
   ageSelect.addEventListener("change", (e) => {
     ageFilter = e.target.value;
     renderAll();
   });
 
-  //5 - adiciona listener para fechar o modal clicando fora (no backdrop)
   modal.addEventListener("click", (e) => {
-    //o clique só é no backdrop se o target for o próprio dialog
-    if (e.target === modal) {
-      closeModal();
-    }
+    if (e.target === modal) closeModal();
   });
+
+  document.querySelectorAll(".nav-link").forEach((link) => {
+    link.addEventListener("click", (e) => {
+      if (link.classList.contains("active")) e.preventDefault();
+    });
+  });
+
+  // Carrega dados
+  fetchProducts();
 });
