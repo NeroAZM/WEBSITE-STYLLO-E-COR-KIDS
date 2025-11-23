@@ -10,11 +10,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const whatsappNumber = "5547996953919";
 
+  telefoneInput.addEventListener("input", (e) => {
+    let value = e.target.value.replace(/\D/g, ""); 
+
+    if (value.length > 11) value = value.slice(0, 11);
+
+    if (value.length > 10) {
+      value = value.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    } else if (value.length > 5) {
+      value = value.replace(/^(\d{2})(\d{4})/, "($1) $2-");
+    } else if (value.length > 2) {
+      value = value.replace(/^(\d{2})/, "($1) ");
+    }
+    
+    e.target.value = value;
+  });
+
   function loadSummary() {
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
     if (cart.length === 0) {
-      window.location.href = "catalogo.html";
       return;
     }
 
@@ -49,11 +64,20 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    if (telefone.length < 14) {
+       showToast("Por favor, insira um telefone válido com DDD.", "error");
+       return;
+    }
+
     let cart = JSON.parse(localStorage.getItem("cart"));
     if (!cart || cart.length === 0) {
       showToast("Seu carrinho está vazio!", "error");
       return;
     }
+
+    const agora = new Date();
+    const dataFormatada = agora.toLocaleDateString('pt-BR');
+    const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
     let total = 0;
     let pedidoTexto = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
@@ -66,10 +90,11 @@ document.addEventListener("DOMContentLoaded", () => {
       total += subtotal;
     });
 
-    pedidoTexto += `\n*Total: R$ ${total.toFixed(2)}*\n\n`;
-    pedidoTexto += "--- Meus Dados ---\n";
-    pedidoTexto += `*Nome:* ${nome}\n`;
-    pedidoTexto += `*Telefone:* ${telefone}`;
+    pedidoTexto += `\n*Total: R$ ${total.toFixed(2)}*\n`;
+    pedidoTexto += `--------------------------\n`; 
+    pedidoTexto += `*Data do Pedido:* ${dataFormatada} às ${horaFormatada}\n`;
+    pedidoTexto += `*Cliente:* ${nome}\n`;
+    pedidoTexto += `*Contato:* ${telefone}`;
 
     const encodedMessage = encodeURIComponent(pedidoTexto);
     const whatsappURL = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${encodedMessage}`;
@@ -109,12 +134,4 @@ document.addEventListener("DOMContentLoaded", () => {
   checkoutForm.addEventListener("submit", handleSubmit);
 
   lucide.createIcons();
-
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", (e) => {
-      if (link.classList.contains("active")) {
-        e.preventDefault();
-      }
-    });
-  });
 });
