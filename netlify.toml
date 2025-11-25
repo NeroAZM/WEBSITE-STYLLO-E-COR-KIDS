@@ -1,0 +1,16 @@
+[build]
+  # Onde estão os arquivos do site (HTML/CSS/JS)
+  publish = "frontend"
+  # Comando para instalar dependências do backend antes de subir
+  command = "cd backend && npm install"
+
+[functions]
+  # Onde está o código do servidor (backend)
+  directory = "backend"
+
+# Redirecionamento mágico:
+# Quando o front chamar /api/..., o Netlify manda para a função serverless
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
