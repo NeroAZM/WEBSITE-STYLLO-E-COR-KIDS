@@ -11,7 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const whatsappNumber = "5547996953919";
 
   telefoneInput.addEventListener("input", (e) => {
+<<<<<<< HEAD
     let value = e.target.value.replace(/\D/g, "");
+=======
+    let value = e.target.value.replace(/\D/g, ""); 
+>>>>>>> a33c047b84831b27ee1a61a65398595924278e77
 
     if (value.length > 11) value = value.slice(0, 11);
 
@@ -22,7 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } else if (value.length > 2) {
       value = value.replace(/^(\d{2})/, "($1) ");
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> a33c047b84831b27ee1a61a65398595924278e77
     e.target.value = value;
   });
 
@@ -65,8 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (telefone.length < 14) {
+<<<<<<< HEAD
       showToast("Por favor, insira um telefone válido com DDD.", "error");
       return;
+=======
+       showToast("Por favor, insira um telefone válido com DDD.", "error");
+       return;
+>>>>>>> a33c047b84831b27ee1a61a65398595924278e77
     }
 
     let cart = JSON.parse(localStorage.getItem("cart"));
@@ -76,11 +89,16 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const agora = new Date();
+<<<<<<< HEAD
     const dataFormatada = agora.toLocaleDateString("pt-BR");
     const horaFormatada = agora.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
     });
+=======
+    const dataFormatada = agora.toLocaleDateString('pt-BR');
+    const horaFormatada = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+>>>>>>> a33c047b84831b27ee1a61a65398595924278e77
 
     let total = 0;
     let pedidoTexto = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
@@ -94,7 +112,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     pedidoTexto += `\n*Total: R$ ${total.toFixed(2)}*\n`;
+<<<<<<< HEAD
     pedidoTexto += `--------------------------\n`;
+=======
+    pedidoTexto += `--------------------------\n`; 
+>>>>>>> a33c047b84831b27ee1a61a65398595924278e77
     pedidoTexto += `*Data do Pedido:* ${dataFormatada} às ${horaFormatada}\n`;
     pedidoTexto += `*Cliente:* ${nome}\n`;
     pedidoTexto += `*Contato:* ${telefone}`;
@@ -137,4 +159,8 @@ document.addEventListener("DOMContentLoaded", () => {
   checkoutForm.addEventListener("submit", handleSubmit);
 
   lucide.createIcons();
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> a33c047b84831b27ee1a61a65398595924278e77
