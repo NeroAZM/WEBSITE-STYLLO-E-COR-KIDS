@@ -2,15 +2,6 @@ body {
   font-family: 'Poppins', sans-serif;
 }
 
-/* .card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-} */
-
-/* .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-} */
-
 .card {
   border: none;
   border-radius: 15px;
@@ -26,10 +17,6 @@ body {
 .text-pink {
   color: #f1a5c7;
 }
-
-/* .text-pink {
-  color: #F8BBD0;
-} */
 
 .nav-link {
   color: #000 !important;

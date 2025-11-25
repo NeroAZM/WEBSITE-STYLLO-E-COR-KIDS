@@ -3,8 +3,8 @@
  */
 
 // CONFIGURAÇÕES E ESTADO
-const URL_API = "http://localhost:3000/api/produtos";
-const URL_CATEGORIAS = "http://localhost:3000/api/categorias";
+const URL_API = "/api/produtos";
+const URL_CATEGORIAS = "/api/categorias";
 
 let listaProdutos = [];
 let produtoIdParaEditar = null;

@@ -2,7 +2,7 @@
  * Busca produtos do MongoDB e gerencia a exibição e filtros.
  */
 
-const API_URL = "http://localhost:3000/api/produtos";
+const API_URL = "/api/produtos";
 let allProducts = [];
 
 // Referências do DOM
