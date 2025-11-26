@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (cart.length === 0) {
       cartEmptyState.classList.remove("hidden");
       cartFullState.classList.add("hidden");
+
+      lucide.createIcons();
+
     } else {
       cartEmptyState.classList.add("hidden");
       cartFullState.classList.remove("hidden");
