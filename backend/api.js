@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const serverless = require("serverless-http");
-=======
+
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -25,7 +25,7 @@ const connectToDatabase = async () => {
     console.log(">>> MongoDB Conectado!");
   } catch (error) {
     console.error(">>> Erro MongoDB:", error);
-=======
+
     console.log('>>> MongoDB Conectado!');
   } catch (error) {
     console.error('>>> Erro MongoDB:', error);
@@ -66,7 +66,7 @@ app.use((req, res) => {
 });
 
 module.exports.handler = serverless(app);
-=======
+
 const rotasProduto = require('./routes/produtoRoutes');
 const rotasAuth = require('./routes/autenticadorRoutes');
 const rotasCategoria = require('./routes/categoriaRoutes');
