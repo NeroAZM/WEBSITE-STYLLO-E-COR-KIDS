@@ -66,26 +66,3 @@ app.use((req, res) => {
 });
 
 module.exports.handler = serverless(app);
-
-const rotasProduto = require('./routes/produtoRoutes');
-const rotasAuth = require('./routes/autenticadorRoutes');
-const rotasCategoria = require('./routes/categoriaRoutes');
-
-router.use('/produtos', rotasProduto);
-router.use('/', rotasAuth);
-router.use('/categorias', rotasCategoria);
-
-router.get('/teste', (req, res) => {
-    res.json({ mensagem: "Backend funcionando!", url: req.originalUrl });
-});
-
-app.use('/api', router);
-
-app.use((req, res) => {
-    res.status(404).json({
-        erro: "Rota não encontrada",
-        caminhoRecebido: req.originalUrl
-    });
-});
-
-module.exports.handler = serverless(app);
