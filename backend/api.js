@@ -9,7 +9,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const serverless = require('serverless-http');
->>>>>>> a33c047b84831b27ee1a61a65398595924278e77
 
 const app = express();
 app.use(cors());
