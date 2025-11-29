@@ -22,7 +22,7 @@ const connectToDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     isConnected = true;
-<<<<<<< HEAD
+
     console.log(">>> MongoDB Conectado!");
   } catch (error) {
     console.error(">>> Erro MongoDB:", error);
@@ -30,7 +30,7 @@ const connectToDatabase = async () => {
     console.log('>>> MongoDB Conectado!');
   } catch (error) {
     console.error('>>> Erro MongoDB:', error);
->>>>>>> a33c047b84831b27ee1a61a65398595924278e77
+
   }
 };
 
@@ -44,7 +44,7 @@ app.use(async (req, res, next) => {
 // --- ROTAS ---
 const router = express.Router();
 
-<<<<<<< HEAD
+
 const rotasProduto = require("./routes/produtoRoutes");
 const rotasAuth = require("./routes/autenticadorRoutes");
 const rotasCategoria = require("./routes/categoriaRoutes");
@@ -90,4 +90,3 @@ app.use((req, res) => {
 });
 
 module.exports.handler = serverless(app);
->>>>>>> a33c047b84831b27ee1a61a65398595924278e77
