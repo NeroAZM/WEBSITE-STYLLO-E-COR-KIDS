@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const serverless = require("serverless-http");
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -14,15 +15,9 @@ const connectToDatabase = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     isConnected = true;
-
     console.log(">>> MongoDB Conectado!");
   } catch (error) {
     console.error(">>> Erro MongoDB:", error);
-
-    console.log('>>> MongoDB Conectado!');
-  } catch (error) {
-    console.error('>>> Erro MongoDB:', error);
-
   }
 };
 
@@ -35,7 +30,6 @@ app.use(async (req, res, next) => {
 
 // --- ROTAS ---
 const router = express.Router();
-
 
 const rotasProduto = require("./routes/produtoRoutes");
 const rotasAuth = require("./routes/autenticadorRoutes");
