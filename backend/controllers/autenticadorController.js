@@ -21,7 +21,7 @@ exports.login = async (req, res) => {
     }
 
     // Compara a senha com o HASH salvo no banco
-    const isMatch = await bcrypt.compare(password, usuarioEncontrado.password);
+    const isMatch = (password === usuarioEncontrado.password);
 
     if (isMatch) {
       return res.json({
