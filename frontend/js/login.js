@@ -1,10 +1,13 @@
 // js/login.js
 
-// Função de toast (com criação automática do container se não existir)
+// --- ADAPTAÇÃO NETLIFY ---
+// Usamos o caminho relativo. O Netlify (via netlify.toml) vai redirecionar isso para o backend.
+const API_URL = "/api/login"; 
+
+// Função de toast
 export function showToast(message, type = "info") {
   let toastContainer = document.getElementById("toast-container");
 
-  // Se não existir no HTML, cria dinamicamente para evitar erros
   if (!toastContainer) {
     toastContainer = document.createElement("div");
     toastContainer.id = "toast-container";
@@ -22,69 +25,40 @@ export function showToast(message, type = "info") {
 
   toast.textContent = message;
 
-  // Cores baseadas no tipo
-  if (type === "success") {
-    toast.classList.add("bg-green-600");
-  } else if (type === "error") {
-    toast.classList.add("bg-red-600");
-  } else {
-    toast.classList.add("bg-blue-600");
-  }
+  if (type === "success") toast.classList.add("bg-green-600");
+  else if (type === "error") toast.classList.add("bg-red-600");
+  else toast.classList.add("bg-blue-600");
 
   toastContainer.appendChild(toast);
 
-  // Animação de entrada
-  requestAnimationFrame(() => {
-    toast.classList.remove("toast-enter");
-  });
+  requestAnimationFrame(() => toast.classList.remove("toast-enter"));
 
-  // Remove após 3 segundos
   setTimeout(() => {
     toast.classList.add("toast-exit");
-    toast.addEventListener("transitionend", () => {
-      toast.remove();
-    });
+    toast.addEventListener("transitionend", () => toast.remove());
   }, 3000);
-}
-
-// Simulação de login
-function mockOnLogin(username, password) {
-  return username === "admin" && password === "admin123";
 }
 
 // Navegação
 function navigateTo(page) {
-  if (page === "home") {
-    window.location.href = "index.html";
-  } else if (page === "admin") {
-    window.location.href = "admin.html";
-  } else {
-    console.warn(`Navegação para a página "${page}" não está implementada.`);
-  }
+  if (page === "home") window.location.href = "index.html";
+  else if (page === "admin") window.location.href = "admin.html";
 }
 
 // Inicialização
 document.addEventListener("DOMContentLoaded", () => {
-  // Inicializa ícones se a biblioteca estiver carregada
-  if (window.lucide) {
-    lucide.createIcons();
-  }
+  if (window.lucide) lucide.createIcons();
 
-  // --- CORREÇÃO AQUI ---
-  // Agora busca pelo ID "loginForm" (igual ao seu HTML) e não "login-form"
   const loginForm = document.getElementById("loginForm");
-
   const usernameInput = document.getElementById("username");
   const passwordInput = document.getElementById("password");
   const backButton = document.getElementById("back-button");
-  const forgotPasswordButton = document.getElementById(
-    "forgot-password-button"
-  );
+  const forgotPasswordButton = document.getElementById("forgot-password-button");
 
   // Botão voltar
   if (backButton) {
     backButton.addEventListener("click", (e) => {
-      e.preventDefault(); // Previne comportamento padrão se for botão dentro de form
+      e.preventDefault();
       navigateTo("home");
     });
   }
@@ -92,13 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // Esqueceu a senha
   if (forgotPasswordButton) {
     forgotPasswordButton.addEventListener("click", () => {
-      showToast("Entre em contato com o suporte", "info");
+      showToast("Entre em contato com o suporte técnico", "info");
     });
   }
 
-  // Submit do formulário
+  // Lógica de Login
   if (loginForm) {
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
       const username = usernameInput.value.trim();
@@ -109,20 +83,45 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const success = mockOnLogin(username, password);
+      const btnSubmit = loginForm.querySelector("button[type='submit']");
+      const textoOriginal = btnSubmit.innerHTML;
+      btnSubmit.innerHTML = "Entrando...";
+      btnSubmit.disabled = true;
 
-      if (success) {
-        showToast("Login realizado com sucesso!", "success");
-        localStorage.setItem("isAdmin", "true");
+      try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
 
-        usernameInput.value = "";
-        passwordInput.value = "";
+        const data = await response.json();
 
-        setTimeout(() => {
-          navigateTo("admin");
-        }, 1500);
-      } else {
-        showToast("Usuário ou senha incorretos", "error");
+        if (response.ok) {
+            showToast("Login realizado com sucesso!", "success");
+            
+            // sessionStorage mantém o login só até fechar o navegador
+            sessionStorage.setItem("tokenUsuario", data.token);
+            
+            usernameInput.value = "";
+            passwordInput.value = "";
+
+            setTimeout(() => {
+                navigateTo("admin");
+            }, 1000);
+
+        } else {
+            showToast(data.message || "Usuário ou senha incorretos", "error");
+        }
+
+      } catch (error) {
+          console.error("Erro de conexão:", error);
+          showToast("Erro ao conectar com o servidor.", "error");
+      } finally {
+          btnSubmit.innerHTML = textoOriginal;
+          btnSubmit.disabled = false;
       }
     });
   } else {
