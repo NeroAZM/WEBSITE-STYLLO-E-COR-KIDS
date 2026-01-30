@@ -1,5 +1,6 @@
 /**
- * Gerencia Produtos, Categorias e Estatísticas via API.
+ * admin.js
+ * Gerencia Produtos (com Upload de Imagem), Categorias e Estatísticas via API.
  */
 
 // CONFIGURAÇÕES E ESTADO
@@ -23,17 +24,41 @@ const tituloModalProduto = document.querySelector("#modal-produto h3");
 const btnNovoProduto = document.getElementById("btn-novo-produto");
 const btnFecharModal = document.getElementById("btn-fechar-modal");
 const btnCancelar = document.getElementById("btn-cancelar");
-const selectCategoriaProduto = document.getElementById(
-  "select-categoria-produto"
-);
+const selectCategoriaProduto = document.getElementById("select-categoria-produto");
 
 const modalCategorias = document.getElementById("modal-categorias");
 const listaCategoriasModal = document.getElementById("lista-categorias-modal");
 const formNovaCategoria = document.getElementById("form-nova-categoria");
-const btnGerenciarCategorias = document.getElementById(
-  "btn-gerenciar-categorias"
-);
+const btnGerenciarCategorias = document.getElementById("btn-gerenciar-categorias");
 const btnFecharCat = document.getElementById("btn-fechar-cat");
+
+// NOVOS ELEMENTOS DE IMAGEM (Adicionados para o Upload)
+const inputArquivo = document.getElementById('input-imagem-arquivo');
+const imgPreview = document.getElementById('img-preview');
+const previewContainer = document.getElementById('preview-container');
+const inputUrlImagemHidden = document.getElementById('input-url-imagem'); // Input hidden
+
+// --- FUNÇÃO AUXILIAR: Converter Arquivo para Base64 ---
+const converterBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+        const fileReader = new FileReader();
+        fileReader.readAsDataURL(file);
+        fileReader.onload = () => resolve(fileReader.result);
+        fileReader.onerror = (error) => reject(error);
+    });
+};
+
+// Evento: Mostra a prévia da imagem assim que o usuário seleciona o arquivo
+if (inputArquivo) {
+    inputArquivo.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const base64 = await converterBase64(file);
+            imgPreview.src = base64;
+            previewContainer.classList.remove('hidden');
+        }
+    });
+}
 
 /**
  * Busca produtos da API
@@ -81,9 +106,12 @@ function criarLinhaProduto(produto) {
   const linha = document.createElement("tr");
   linha.className = "border-bottom hover:bg-gray-50 transition-colors";
 
-  const urlImagem = produto.images
-    ? produto.images
-    : "https://placehold.co/100?text=Sem+Foto";
+  // Lógica para pegar a imagem (seja array, string, url ou base64)
+  let urlImagem = "https://placehold.co/100?text=Sem+Foto";
+  if (produto.images) {
+      urlImagem = Array.isArray(produto.images) ? produto.images[0] : produto.images;
+  }
+  
   const precoFormatado = parseFloat(produto.price).toFixed(2);
   const idCurto = produto._id ? produto._id.slice(-6) : "...";
 
@@ -121,7 +149,7 @@ function criarLinhaProduto(produto) {
 }
 
 /**
- * Abre o modal preenchido para edição
+ * Abre o modal preenchido para edição (AJUSTADO PARA IMAGEM)
  */
 window.abrirModalEditar = (id) => {
   const produto = listaProdutos.find((p) => p._id === id);
@@ -131,10 +159,27 @@ window.abrirModalEditar = (id) => {
   formProduto.preco.value = produto.price;
   formProduto.categoria.value = produto.category;
   formProduto.faixaEtaria.value = produto.ageRange;
-  formProduto.imagem.value = produto.images || "";
   formProduto.descricao.value = produto.description;
   formProduto.tamanhos.value = produto.sizes || "";
   formProduto.cores.value = produto.colors || "";
+
+  // Lógica de Imagem na Edição:
+  // 1. Pega a imagem atual
+  const imgAtual = Array.isArray(produto.images) ? produto.images[0] : produto.images;
+  
+  // 2. Salva no input hidden (caso o usuário não faça upload de uma nova)
+  if(inputUrlImagemHidden) inputUrlImagemHidden.value = imgAtual || "";
+
+  // 3. Mostra o preview
+  if(imgAtual) {
+      imgPreview.src = imgAtual;
+      previewContainer.classList.remove('hidden');
+  } else {
+      previewContainer.classList.add('hidden');
+  }
+
+  // 4. Limpa o input de arquivo (para garantir estado limpo)
+  if(inputArquivo) inputArquivo.value = "";
 
   produtoIdParaEditar = id;
   tituloModalProduto.textContent = "Editar Produto";
@@ -259,9 +304,7 @@ function exibirErroNaTabela(mensagem) {
 // Eventos de Modais
 if (btnNovoProduto)
   btnNovoProduto.addEventListener("click", () => {
-    produtoIdParaEditar = null;
-    tituloModalProduto.textContent = "Cadastrar Novo Produto";
-    formProduto.reset();
+    fecharTodosModais(); // Garante limpeza total
     modalProduto.showModal();
   });
 
@@ -275,6 +318,12 @@ function fecharTodosModais() {
   modalProduto.close();
   modalCategorias.close();
   formProduto.reset();
+  
+  // Limpa Preview e Estados
+  previewContainer.classList.add('hidden');
+  if(imgPreview) imgPreview.src = "";
+  if(inputArquivo) inputArquivo.value = "";
+  
   produtoIdParaEditar = null;
   tituloModalProduto.textContent = "Cadastrar Novo Produto";
 }
@@ -283,17 +332,26 @@ if (btnFecharModal) btnFecharModal.addEventListener("click", fecharTodosModais);
 if (btnCancelar) btnCancelar.addEventListener("click", fecharTodosModais);
 if (btnFecharCat) btnFecharCat.addEventListener("click", fecharTodosModais);
 
-// Submit do Form (Criar ou Editar)
+// Submit do Form (Criar ou Editar - COM UPLOAD)
 if (formProduto) {
   formProduto.addEventListener("submit", async (e) => {
     e.preventDefault();
     const formData = new FormData(formProduto);
 
-    // 1. Formata Texto (Preservando Espaços)
-    const tamanhosFormatados = formatarTextoCapitalizado(
-      formData.get("tamanhos")
-    );
+    // 1. Formata Texto (Preservando Espaços - Lógica que você já tinha)
+    const tamanhosFormatados = formatarTextoCapitalizado(formData.get("tamanhos"));
     const coresFormatadas = formatarTextoCapitalizado(formData.get("cores"));
+
+    // 2. Lógica de Imagem (Arquivo Novo vs URL Antiga)
+    let imagemFinal = "";
+    
+    // Verifica se tem arquivo novo selecionado
+    if (inputArquivo && inputArquivo.files.length > 0) {
+        imagemFinal = await converterBase64(inputArquivo.files[0]);
+    } else {
+        // Se não, pega o valor do campo hidden (que tem a imagem antiga)
+        imagemFinal = inputUrlImagemHidden ? inputUrlImagemHidden.value : "";
+    }
 
     const dadosProduto = {
       name: formData.get("nome"),
@@ -301,7 +359,7 @@ if (formProduto) {
       category: formData.get("categoria"),
       ageRange: formData.get("faixaEtaria"),
       description: formData.get("descricao"),
-      images: formData.get("imagem"),
+      images: imagemFinal, // Agora enviamos o Base64 ou a URL antiga
       sizes: tamanhosFormatados,
       colors: coresFormatadas,
     };
